@@ -1,4 +1,4 @@
-﻿using TodoListApi.DTOs;
+﻿using TodoListApi.DTOs.Todo;
 using TodoListApi.Models;
 using TodoListApi.Repositories.Interface;
 

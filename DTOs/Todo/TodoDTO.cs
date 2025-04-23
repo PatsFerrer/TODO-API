@@ -1,4 +1,4 @@
-﻿namespace TodoListApi.DTOs
+﻿namespace TodoListApi.DTOs.Todo
 {
     public class TodoDTO
     {
