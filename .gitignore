@@ -1,0 +1,25 @@
+# Arquivos de configuração com dados sensíveis
+*.Development.json
+*.Production.json
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# Arquivos de build
+bin/
+obj/
+Debug/
+Release/
+
+# Arquivos de IDE
+.vs/
+.vscode/
+*.user
+*.suo
+*.cache
+
+# Arquivos de log
+*.log
+logs/ 
