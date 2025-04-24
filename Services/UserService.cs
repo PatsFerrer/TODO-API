@@ -1,6 +1,7 @@
 ﻿using TodoListApi.DTOs.User;
 using TodoListApi.Models;
 using TodoListApi.Repositories.Interface;
+using TodoListApi.Security;
 using TodoListApi.Services.Interface;
 
 namespace TodoListApi.Services
@@ -20,7 +21,7 @@ namespace TodoListApi.Services
             {
                 Id = Guid.NewGuid(),
                 Username = dto.Username,
-                PasswordHash = dto.Password
+                PasswordHash = PasswordHasher.HashPassword(dto.Password)
             };
 
             var createdUser = await _repository.CreateAsync(user);
