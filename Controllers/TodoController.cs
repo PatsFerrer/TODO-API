@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TodoListApi.DTOs.Todo;
 using TodoListApi.Services;
+using TodoListApi.Services.Interface;
 
 namespace TodoListApi.Controllers
 {
@@ -8,9 +9,9 @@ namespace TodoListApi.Controllers
     [Route("api/[controller]")]
     public class TodoController : ControllerBase
     {
-        private readonly TodoService _service;
+        private readonly ITodoService _service;
 
-        public TodoController(TodoService service)
+        public TodoController(ITodoService service)
         {
             _service = service;
         }

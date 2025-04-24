@@ -1,10 +1,11 @@
 ﻿using TodoListApi.DTOs.Todo;
 using TodoListApi.Models;
 using TodoListApi.Repositories.Interface;
+using TodoListApi.Services.Interface;
 
 namespace TodoListApi.Services
 {
-    public class TodoService
+    public class TodoService : ITodoService
     {
         private readonly ITodoRepository _repository;
 

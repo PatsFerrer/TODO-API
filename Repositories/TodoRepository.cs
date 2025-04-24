@@ -16,7 +16,7 @@ namespace TodoListApi.Repositories
 
         public async Task CreateAsync(Todo todo)
         {
-            var query = File.ReadAllText("Data/CreateTodo.sql");
+            var query = File.ReadAllText("Data/Todos/CreateTodo.sql");
 
             using (var connection = new SqlConnection(_connectionString))
             {
