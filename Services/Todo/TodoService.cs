@@ -1,9 +1,8 @@
 ﻿using TodoListApi.DTOs.Todo;
-using TodoListApi.Models;
 using TodoListApi.Repositories.Interface;
 using TodoListApi.Services.Interface;
 
-namespace TodoListApi.Services
+namespace TodoListApi.Services.Todo
 {
     public class TodoService : ITodoService
     {
@@ -16,7 +15,7 @@ namespace TodoListApi.Services
 
         public async Task CreateTodoAsync(CreateTodoDTO dto)
         {
-            var todo = new Todo
+            var todo = new Models.Todo
             {
                 Id = Guid.NewGuid(),
                 Title = dto.Title,
