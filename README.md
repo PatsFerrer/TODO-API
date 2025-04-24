@@ -48,10 +48,15 @@ O appsettings.json já está preparado para usar essas variáveis.
 
 Exemplo de string de conexão:
 ```bash
-"ConnectionStrings": {
-  "DefaultConnection": "Server=localhost,1433;Database=TodoDb;User Id=sa;Password=SuaSenhaAqui;TrustServerCertificate=True;"
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost,1433;Database=YourDatabase;User Id=yourId;Password=yourPassword;TrustServerCertificate=True"
+  },
+  "Jwt": {
+    "Key": "your-amazing-secret-key-here-xP"
+  },
+  "AllowedHosts": "*"
 }
-
 ```
 
 Atenção: o arquivo appsettings.Development.json não está no repositório para evitar vazamento de senha. Crie esse arquivo localmente.
