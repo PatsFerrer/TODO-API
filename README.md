@@ -64,11 +64,11 @@ dotnet run
 
 A API será iniciada e você poderá fazer chamadas para os endpoints usando ferramentas como Postman ou Insomnia.
 
- Funcionalidades já implementadas
+Funcionalidades já implementadas:
 `[x]` Criação de usuários com hash de senha seguro
-`[]` Separação por camadas (Model, DTO, Repository, Service, Controller)
-`[]` Persistência com Dapper
-`[]` Configuração por variáveis de ambiente
+`[x]` Separação por camadas (Model, DTO, Repository, Service, Controller)
+`[x]` Persistência com Dapper
+`[x]` Configuração por variáveis de ambiente
 `[]` Autenticação com JWT (em breve)
 `[]` Validação de dados com FluentValidation
 
