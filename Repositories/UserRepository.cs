@@ -24,7 +24,16 @@ namespace TodoListApi.Repositories
             }
 
             return user;
+        }
 
+        public async Task<User?> GetByUsernameAsync(string username)
+        {
+            var query = File.ReadAllText("Data/Users/GetUserByUsername.sql");
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                return await connection.QueryFirstOrDefaultAsync<User>(query, new { Username = username });
+            }
         }
     }
 }
