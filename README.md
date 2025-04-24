@@ -30,8 +30,7 @@ Esta é uma API REST feita com .NET 8 que simula uma lista de tarefas com autent
 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/seu-usuario/TodoListApi.git
-cd TodoListApi
+git clone https://github.com/PatsFerrer/TODO-API.git
 ```
 
 2. Crie o banco de dados
