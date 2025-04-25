@@ -46,6 +46,11 @@ namespace TodoListApi.Middlewares
                     errorCode = "NOT_FOUND";
                     message = "O recurso solicitado não foi encontrado.";
                     break;
+                case UsernameAlreadyExistsException:
+                    statusCode = (int)HttpStatusCode.Conflict;
+                    errorCode = "USERNAME_ALREADY_EXISTS";
+                    message = exception.Message;
+                    break;
                 case SqlException:
                     statusCode = (int)HttpStatusCode.ServiceUnavailable;
                     errorCode = "DATABASE_ERROR";
