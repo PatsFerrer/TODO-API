@@ -22,7 +22,7 @@ namespace TodoListApi.Controllers
         public async Task<IActionResult> Create([FromBody] CreateUserDTO dto)
         {
             var user = await _service.CreateUserAsync(dto);
-            _logger.LogInformation("User created successfully with username: {Username}", dto.Username);
+            _logger.LogInformation("[USER CREATED] Username: {Username}", dto.Username);
             return Ok(user);
         }
     }

@@ -9,10 +9,12 @@ namespace TodoListApi.Auth
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, ILogger<AuthController> logger)
         {
             _authService = authService;
+            _logger = logger;
         }
 
         [HttpPost("login")]
@@ -27,6 +29,8 @@ namespace TodoListApi.Auth
             {
                 return Unauthorized("Invalid username or password");
             }
+
+            _logger.LogInformation("[AUTH] Login attempt Username: {Username}", dto.Username);
             return Ok(new LoginResponseDTO { Token = token });
         }
     }

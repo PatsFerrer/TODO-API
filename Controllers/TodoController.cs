@@ -23,7 +23,7 @@ namespace TodoListApi.Controllers
         public async Task<IActionResult> Create([FromBody] CreateTodoDTO dto)
         {
             await _service.CreateTodoAsync(dto, User);
-            _logger.LogInformation("Todo created successfully with title: {Title}", dto.Title);
+            _logger.LogInformation("[TODO CREATED] Title: {Title}", dto.Title);
             return Ok(new { message = "Todo created successfully" });
         }
     }
