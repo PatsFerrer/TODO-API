@@ -42,7 +42,7 @@ namespace TodoListApi.Services.User
             }
             catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
             {
-                _logger.LogWarning(ex, "Usuário já existente: {Username}", dto.Username);
+                _logger.LogWarning(ex, "[CREATE USER] User already exists: {Username}", dto.Username);
                 throw new UsernameAlreadyExistsException();
             }
         }
