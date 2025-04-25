@@ -73,7 +73,7 @@ Funcionalidades já implementadas:
 `[x]` Separação por camadas (Model, DTO, Repository, Service, Controller)
 `[x]` Persistência com Dapper
 `[x]` Configuração por variáveis de ambiente
-`[]` Autenticação com JWT (em breve)
+`[x]` Autenticação com JWT
 `[]` Validação de dados com FluentValidation
 
 ## Estrutura de pastas
@@ -89,6 +89,35 @@ TodoListApi/
 ├── Data/                 # Scripts de criação de banco
 └── Program.cs            # Configuração da aplicação
 ```
+
+## 🔑 Endpoints
+### Usuários
+- `POST /api/user` - Cria um novo usuário
+  - Body:
+    ```json
+    {
+      "username": "string",
+      "password": "string"
+    }
+    ```
+### Tarefas
+- `POST /api/todos` - Cria uma nova tarefa
+  - Body:
+    ```json
+    {
+      "title": "string",
+      "description": "string"
+    }
+    ```
+### Login
+- `POST /api/login` - Faz login e retorna um token JWT
+  - Body:
+    ```json
+    {
+      "username": "string",
+      "password": "string"
+    }
+    ```
 
 ## 🧪 Testes
 Por enquanto os testes estão sendo feitos manualmente via Postman. Em breve será adicionado um projeto de testes automatizados.
