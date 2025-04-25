@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TodoListApi.DTOs.Shared;
 using TodoListApi.DTOs.Todo;
 using TodoListApi.Services.Interface;
 
@@ -22,9 +23,15 @@ namespace TodoListApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateTodoDTO dto)
         {
-            await _service.CreateTodoAsync(dto, User);
+            var createdTodo = await _service.CreateTodoAsync(dto, User);
             _logger.LogInformation("[TODO CREATED] Title: {Title}", dto.Title);
-            return Ok(new { message = "Todo created successfully" });
+
+            var response = new ApiResponse<TodoResponseDTO>(
+                "Todo created successfully",
+                createdTodo
+            );
+
+            return Ok(response);
         }
     }
 }

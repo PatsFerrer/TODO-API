@@ -5,6 +5,6 @@ namespace TodoListApi.Services.Interface
 {
     public interface ITodoService
     {
-        Task CreateTodoAsync(CreateTodoDTO dto, ClaimsPrincipal user);
+        Task<TodoResponseDTO> CreateTodoAsync(CreateTodoDTO dto, ClaimsPrincipal user);
     }
 }
