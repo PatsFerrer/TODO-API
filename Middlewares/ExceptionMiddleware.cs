@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using Microsoft.Data.SqlClient;
+using System.Net;
 using System.Text.Json;
+using TodoListApi.Exceptions;
 
 namespace TodoListApi.Middlewares
 {
@@ -22,25 +24,52 @@ namespace TodoListApi.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unhandled exception: {Message}", ex.Message);
-
-                context.Response.ContentType = "application/json";
-                context.Response.StatusCode = ex switch
-                {
-                    UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,
-                    ArgumentException => (int)HttpStatusCode.BadRequest,
-                    _ => (int)HttpStatusCode.InternalServerError
-                };
-
-                var result = JsonSerializer.Serialize(new
-                {
-                    error = context.Response.StatusCode == 500
-                        ? "An unexpected error occurred. Please try again later."
-                        : ex.Message
-                });
-
-                await context.Response.WriteAsync(result);
+                await HandleExceptionAsync(context, ex);
             }
+        }
+
+        private async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
+        {
+            var statusCode = (int)HttpStatusCode.InternalServerError;
+            var errorCode = "INTERNAL_SERVER_ERROR";
+            var message = "Algo deu errado. Por favor, tente novamente mais tarde.";
+
+            switch (exception)
+            {
+                case UnauthorizedAccessException:
+                    statusCode = (int)HttpStatusCode.Unauthorized;
+                    errorCode = "UNAUTHORIZED";
+                    message = "Acesso não autorizado.";
+                    break;
+                case KeyNotFoundException:
+                    statusCode = (int)HttpStatusCode.NotFound;
+                    errorCode = "NOT_FOUND";
+                    message = "O recurso solicitado não foi encontrado.";
+                    break;
+                case SqlException:
+                    statusCode = (int)HttpStatusCode.ServiceUnavailable;
+                    errorCode = "DATABASE_ERROR";
+                    message = "Serviço temporariamente indisponível.";
+                    break;
+                case ArgumentException:
+                    statusCode = (int)HttpStatusCode.BadRequest;
+                    errorCode = "BAD_REQUEST";
+                    message = exception.Message;
+                    break;
+            }
+
+            _logger.LogError(exception, "Erro inesperado: {Message}", exception.Message);
+
+            var response = new ErrorResponse
+            {
+                StatusCode = statusCode,
+                Message = message,
+                ErrorCode = errorCode
+            };
+
+            httpContext.Response.ContentType = "application/json";
+            httpContext.Response.StatusCode = statusCode;
+            await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
         }
     }
 }
