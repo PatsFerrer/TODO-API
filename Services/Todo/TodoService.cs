@@ -1,4 +1,6 @@
-﻿using TodoListApi.DTOs.Todo;
+﻿using System.Security.Claims;
+using TodoListApi.DTOs.Todo;
+using TodoListApi.Extensions;
 using TodoListApi.Repositories.Interface;
 using TodoListApi.Services.Interface;
 
@@ -13,7 +15,7 @@ namespace TodoListApi.Services.Todo
             _repository = repository;
         }
 
-        public async Task CreateTodoAsync(CreateTodoDTO dto)
+        public async Task CreateTodoAsync(CreateTodoDTO dto, ClaimsPrincipal user)
         {
             var todo = new Models.Todo
             {
@@ -22,7 +24,7 @@ namespace TodoListApi.Services.Todo
                 IsCompleted = false,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
-                UserId = dto.UserId
+                UserId = user.GetUserId()
             };
 
             await _repository.CreateAsync(todo);

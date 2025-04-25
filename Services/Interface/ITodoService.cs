@@ -1,9 +1,10 @@
-﻿using TodoListApi.DTOs.Todo;
+﻿using System.Security.Claims;
+using TodoListApi.DTOs.Todo;
 
 namespace TodoListApi.Services.Interface
 {
     public interface ITodoService
     {
-        Task CreateTodoAsync(CreateTodoDTO dto);
+        Task CreateTodoAsync(CreateTodoDTO dto, ClaimsPrincipal user);
     }
 }
