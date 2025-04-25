@@ -41,6 +41,11 @@ namespace TodoListApi.Middlewares
                     errorCode = "UNAUTHORIZED";
                     message = "Acesso não autorizado.";
                     break;
+                case InvalidCredentialsException:
+                    statusCode = (int)HttpStatusCode.Unauthorized;
+                    errorCode = "INVALID_CREDENTIALS";
+                    message = exception.Message;
+                    break;
                 case KeyNotFoundException:
                     statusCode = (int)HttpStatusCode.NotFound;
                     errorCode = "NOT_FOUND";

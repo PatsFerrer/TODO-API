@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using TodoListApi.Auth.Interface;
 using TodoListApi.DTOs.Auth;
+using TodoListApi.Exceptions;
 using TodoListApi.Models;
 using TodoListApi.Repositories.Interface;
 using TodoListApi.Security;
@@ -24,10 +25,14 @@ namespace TodoListApi.Auth
         public async Task<string?> LoginAsync(LoginRequestDTO dto)
         {
             var user = await _userRepository.GetByUsernameAsync(dto.Username);
-            if (user == null) return null;
 
-            var isValid = PasswordHasher.VerifyPassword(dto.Password, user.PasswordHash, user.Salt);
-            if (!isValid) return null;
+            if (user == null)
+                throw new InvalidCredentialsException();
+
+            var passwordValid = PasswordHasher.VerifyPassword(dto.Password, user.PasswordHash, user.Salt);
+
+            if (!passwordValid)
+                throw new InvalidCredentialsException();
 
             return GenerateJwtToken(user);
         }
