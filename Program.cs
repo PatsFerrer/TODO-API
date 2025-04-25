@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TodoListApi.Auth;
 using TodoListApi.Auth.Interface;
+using TodoListApi.Middlewares;
 using TodoListApi.Repositories;
 using TodoListApi.Repositories.Interface;
 using TodoListApi.Services.Interface;
@@ -54,6 +55,8 @@ var app = builder.Build();
 
 // Pipeline HTTP.
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionMiddleware>(); // <-- isso ativa o middleware de tratamento de erros
 
 app.UseAuthentication(); // <-- isso ativa o middleware de autenticação
 app.UseAuthorization();
