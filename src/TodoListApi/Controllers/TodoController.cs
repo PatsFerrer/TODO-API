@@ -31,6 +31,21 @@ namespace TodoListApi.Controllers
                 createdTodo
             );
 
+            return CreatedAtAction(nameof(Create), new { id = createdTodo.Id }, response);
+
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetTodos()
+        {
+            var todos = await _service.GetTodosByUserAsync(User);
+
+            var response = new ApiResponse<IEnumerable<TodoResponseDTO>>(
+                "Todos fetched successfully",
+                todos
+            );
+
             return Ok(response);
         }
     }
