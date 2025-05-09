@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using TodoListApi.DTOs.Todo;
 using TodoListApi.Models;
 using TodoListApi.Repositories.Interface;
 
@@ -22,6 +23,18 @@ namespace TodoListApi.Repositories
             {
                 await connection.ExecuteAsync(query, todo);
             }
+        }
+
+        public async Task<IEnumerable<TodoResponseDTO>> GetTodosByUserIdAsync(Guid userId)
+        {
+            var query = File.ReadAllText("Data/Todos/GetTodosByUserId.sql");
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var todos = await connection.QueryAsync<TodoResponseDTO>(query, new { UserId = userId });
+                return todos;
+            }
+
         }
     }
 }
