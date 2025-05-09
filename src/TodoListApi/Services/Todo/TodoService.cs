@@ -38,5 +38,11 @@ namespace TodoListApi.Services.Todo
                 CreatedAt = todo.CreatedAt
             };
         }
+
+        public async Task<IEnumerable<TodoResponseDTO>> GetTodosByUserAsync(ClaimsPrincipal user)
+        {
+            var userId = user.GetUserId();
+            return await _repository.GetTodosByUserIdAsync(userId);
+        }
     }
 }
