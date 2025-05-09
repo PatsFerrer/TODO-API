@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TodoListApi.DTOs.User;
-using TodoListApi.Services;
 using TodoListApi.Services.Interface;
 
 namespace TodoListApi.Controllers
@@ -23,7 +22,8 @@ namespace TodoListApi.Controllers
         {
             var user = await _service.CreateUserAsync(dto);
             _logger.LogInformation("[USER CREATED] Username: {Username}", dto.Username);
-            return Ok(user);
+
+            return CreatedAtAction(nameof(Create), new { id = user.Id }, user);
         }
     }
 }
