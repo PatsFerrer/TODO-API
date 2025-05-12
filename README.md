@@ -34,13 +34,15 @@ git clone https://github.com/PatsFerrer/TODO-API.git
 ```
 
 2. Crie o banco de dados
+
 O script de criação do banco já está pronto no arquivo `Data/InitDb.sql`.
 Você só precisa rodar esse script em uma instância do SQL Server (pode ser local ou em um container Docker).
 
 💡 Dica: para rodar via SSMS ou Azure Data Studio, basta abrir o arquivo InitDb.sql e executar.
 
 3. Configure a conexão com o banco
-Já existe um arquivo .env.example com o modelo das variáveis de ambiente.
+
+1. Já existe um arquivo .env.example com o modelo das variáveis de ambiente.
 
 Crie seu .env com os dados reais de conexão ao banco SQL Server.
 
