@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Net;
 using System.Text.Json;
+using TodoListApi.Constants;
 using TodoListApi.Exceptions;
 
 namespace TodoListApi.Middlewares
@@ -31,39 +32,39 @@ namespace TodoListApi.Middlewares
         private async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
         {
             var statusCode = (int)HttpStatusCode.InternalServerError;
-            var errorCode = "INTERNAL_SERVER_ERROR";
+            var errorCode = ErrorCode.InternalServerError;
             var message = "Algo deu errado. Por favor, tente novamente mais tarde.";
 
             switch (exception)
             {
                 case UnauthorizedAccessException:
                     statusCode = (int)HttpStatusCode.Unauthorized;
-                    errorCode = "UNAUTHORIZED";
+                    errorCode = ErrorCode.Unauthorized;
                     message = "Acesso não autorizado.";
                     break;
                 case InvalidCredentialsException:
                     statusCode = (int)HttpStatusCode.Unauthorized;
-                    errorCode = "INVALID_CREDENTIALS";
+                    errorCode = ErrorCode.InvalidCredentials;
                     message = exception.Message;
                     break;
                 case KeyNotFoundException:
                     statusCode = (int)HttpStatusCode.NotFound;
-                    errorCode = "NOT_FOUND";
+                    errorCode = ErrorCode.NotFound;
                     message = "O recurso solicitado não foi encontrado.";
                     break;
                 case UsernameAlreadyExistsException:
                     statusCode = (int)HttpStatusCode.Conflict;
-                    errorCode = "USERNAME_ALREADY_EXISTS";
+                    errorCode = ErrorCode.UsernameAlreadyExists;
                     message = exception.Message;
                     break;
                 case SqlException:
                     statusCode = (int)HttpStatusCode.ServiceUnavailable;
-                    errorCode = "DATABASE_ERROR";
+                    errorCode = ErrorCode.DatabaseError;
                     message = "Serviço temporariamente indisponível.";
                     break;
                 case ArgumentException:
                     statusCode = (int)HttpStatusCode.BadRequest;
-                    errorCode = "BAD_REQUEST";
+                    errorCode = ErrorCode.BadRequest;
                     message = exception.Message;
                     break;
             }
@@ -79,7 +80,11 @@ namespace TodoListApi.Middlewares
 
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = statusCode;
-            await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
+            await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            }));
+
         }
     }
 }
