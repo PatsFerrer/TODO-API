@@ -51,7 +51,21 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // Permite usar variáveis de ambiente
 builder.Configuration.AddEnvironmentVariables();
 
+// Configuração do CORS pro Front:
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+}); // até aqui
+
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
 
 // Pipeline HTTP.
 app.UseHttpsRedirection();
