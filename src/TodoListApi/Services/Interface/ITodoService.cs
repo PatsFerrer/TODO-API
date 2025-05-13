@@ -7,6 +7,6 @@ namespace TodoListApi.Services.Interface
     {
         Task<TodoResponseDTO> CreateTodoAsync(CreateTodoDTO dto, ClaimsPrincipal user);
         Task<IEnumerable<TodoResponseDTO>> GetTodosByUserAsync(ClaimsPrincipal user);
-
+        Task<bool> UpdateStatusAsync(Guid todoId, Guid userId, bool isCompleted);
     }
 }

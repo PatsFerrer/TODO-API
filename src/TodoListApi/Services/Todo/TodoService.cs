@@ -44,5 +44,16 @@ namespace TodoListApi.Services.Todo
             var userId = user.GetUserId();
             return await _repository.GetTodosByUserIdAsync(userId);
         }
+
+        public async Task<bool> UpdateStatusAsync(Guid todoId, Guid userId, bool isCompleted)
+        {
+            var todo = await _repository.GetByIdAsync(todoId);
+
+            if (todo == null || todo.UserId != userId) return false;
+
+            todo.IsCompleted = isCompleted;
+            await _repository.UpdateAsync(todo);
+            return true;
+        }
     }
 }
