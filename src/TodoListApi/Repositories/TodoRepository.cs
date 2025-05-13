@@ -55,5 +55,15 @@ namespace TodoListApi.Repositories
                 await connection.ExecuteAsync(query, new { todo.Id, todo.IsCompleted });
             }
         }
+
+        public async Task DeleteAsync(Todo todo)
+        {
+            var query = File.ReadAllText("Data/Todos/DeleteTodo.sql");
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.ExecuteAsync(query, new { todo.Id });
+            }
+        }
     }
 }

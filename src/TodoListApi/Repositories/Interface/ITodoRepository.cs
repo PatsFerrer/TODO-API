@@ -9,5 +9,6 @@ namespace TodoListApi.Repositories.Interface
         Task<IEnumerable<TodoResponseDTO>> GetTodosByUserIdAsync(Guid userId);
         Task<Todo?> GetByIdAsync(Guid id);
         Task UpdateAsync(Todo todo);
+        Task DeleteAsync(Todo todo);
     }
 }
