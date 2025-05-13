@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json;
 using TodoListApi.Auth;
 using TodoListApi.Auth.Interface;
 using TodoListApi.Middlewares;
@@ -9,11 +10,23 @@ using TodoListApi.Repositories.Interface;
 using TodoListApi.Services.Interface;
 using TodoListApi.Services.Todo;
 using TodoListApi.Services.User;
+using TodoListApi.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Adiciona Controllers
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+        options.JsonSerializerOptions.WriteIndented = true;
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+
+        // Esta linha garante que as datas sejam enviadas em UTC com 'Z'
+        options.JsonSerializerOptions.Converters.Add(new DateTimeUtcConverter());
+    });
 
 var jwtKey = builder.Configuration["Jwt:Key"]; // pega do appsettings ou .env
 if (string.IsNullOrEmpty(jwtKey))
@@ -46,7 +59,6 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITodoService, TodoService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-
 
 // Permite usar variáveis de ambiente
 builder.Configuration.AddEnvironmentVariables();
