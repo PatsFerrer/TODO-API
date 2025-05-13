@@ -34,7 +34,26 @@ namespace TodoListApi.Repositories
                 var todos = await connection.QueryAsync<TodoResponseDTO>(query, new { UserId = userId });
                 return todos;
             }
+        }
 
+        public async Task<Todo?> GetByIdAsync(Guid id)
+        {
+            var query = File.ReadAllText("Data/Todos/GetTodoById.sql");
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                return await connection.QueryFirstOrDefaultAsync<Todo>(query, new { Id = id });
+            }
+        }
+
+        public async Task UpdateAsync(Todo todo)
+        {
+            var query = File.ReadAllText("Data/Todos/UpdateTodo.sql");
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.ExecuteAsync(query, new { todo.Id, todo.IsCompleted });
+            }
         }
     }
 }
