@@ -62,6 +62,19 @@ namespace TodoListApi.Controllers
             return NoContent();
         }
 
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var userId = GetUserIdFromToken();
+            var deleted = await _service.DeleteTodoAsync(id, userId);
+
+            if (!deleted)
+                return NotFound(new { message = "Todo não encontrado ou não pertence a você" });
+
+            return NoContent();
+        }
+
         private Guid GetUserIdFromToken()
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
