@@ -48,5 +48,24 @@ namespace TodoListApi.Controllers
 
             return Ok(response);
         }
+
+        [Authorize]
+        [HttpPatch("status/{id}")]
+        public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateTodoStatusDTO dto)
+        {
+            var userId = GetUserIdFromToken();
+            var updated = await _service.UpdateStatusAsync(id, userId, dto.IsCompleted);
+
+            if (!updated)
+                return NotFound(new { message = "Todo não encontrado ou não pertence a você" });
+
+            return NoContent();
+        }
+
+        private Guid GetUserIdFromToken()
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
+            return Guid.Parse(userIdClaim!.Value);
+        }
     }
 }
