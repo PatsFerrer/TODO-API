@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using System.Threading.Tasks;
 using TodoListApi.DTOs.Todo;
 using TodoListApi.Extensions;
 using TodoListApi.Repositories.Interface;
@@ -53,6 +52,16 @@ namespace TodoListApi.Services.Todo
 
             todo.IsCompleted = isCompleted;
             await _repository.UpdateAsync(todo);
+            return true;
+        }
+
+        public async Task<bool> DeleteTodoAsync(Guid todoId, Guid userId)
+        {
+            var todo = await _repository.GetByIdAsync(todoId);
+
+            if (todo == null || todo.UserId != userId) return false;
+
+            await _repository.DeleteAsync(todo);
             return true;
         }
     }
