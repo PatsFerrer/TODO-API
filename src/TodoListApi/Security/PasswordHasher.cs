@@ -5,7 +5,7 @@ namespace TodoListApi.Security
 {
     public class PasswordHasher
     {
-        public static (string Hash, string Salt) HashPassword(string password)
+        public static (string Hash, string Salt) HashPassword(string password) // passar o id como salt
         {
             var saltBytes = RandomNumberGenerator.GetBytes(16); // 16 bytes = 128 bits
             var salt = Convert.ToBase64String(saltBytes);
