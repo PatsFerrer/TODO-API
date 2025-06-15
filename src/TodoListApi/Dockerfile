@@ -1,30 +1,35 @@
-# Acesse https://aka.ms/customizecontainer para saber como personalizar seu contêiner de depuração e como o Visual Studio usa este Dockerfile para criar suas imagens para uma depuração mais rápida.
-
-# Esta fase é usada durante a execução no VS no modo rápido (Padrão para a configuração de Depuração)
+# Base para runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
-# Esta fase é usada para compilar o projeto de serviço
+# Imagem para build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["TodoListApi.csproj", "."]
-RUN dotnet restore "./TodoListApi.csproj"
-COPY . .
-WORKDIR "/src/."
-RUN dotnet build "./TodoListApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
+# Copia o .csproj e restaura dependências
+COPY TodoListApi.csproj .
+RUN dotnet restore TodoListApi.csproj
+
+# Copia o resto dos arquivos do projeto
+COPY . .
+
+# Compila o projeto
+RUN dotnet build TodoListApi.csproj -c $BUILD_CONFIGURATION -o /app/build
+
+# Publica o projeto
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./TodoListApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish TodoListApi.csproj -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
+# Imagem final de execução
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# --- SOLUCAO: Adicione esta linha para copiar seus scripts SQL ---
+COPY --from=build /src/Data ./Data
+
 ENTRYPOINT ["dotnet", "TodoListApi.dll"]

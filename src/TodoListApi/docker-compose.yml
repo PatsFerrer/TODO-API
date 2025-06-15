@@ -1,6 +1,7 @@
 services:
   sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    # CORRECAO: Usando a imagem azure-sql-edge que inclui as sql-tools
+    image: mcr.microsoft.com/azure-sql-edge
     container_name: sqlserver-todo
     environment:
       SA_PASSWORD: "${SQL_SA_PASSWORD}"
@@ -10,10 +11,19 @@ services:
     volumes:
       - sqlvolume:/var/opt/mssql
       - ./Data:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"${SQL_SA_PASSWORD}\" -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
     command: >
-      bash -c " /opt/mssql/bin/sqlservr & sleep 20 &&
-                /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${SQL_SA_PASSWORD} -i /docker-entrypoint-initdb.d/InitDb.sql &&
-                tail -f /dev/null"
+      bash -c "
+        /opt/mssql/bin/sqlservr &
+        sleep 30 &&
+        /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P '${SQL_SA_PASSWORD}' -i /docker-entrypoint-initdb.d/InitDb.sql &&
+        tail -f /dev/null
+      "
 
   api:
     build:
@@ -22,10 +32,12 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - sqlserver
+      sqlserver:
+        condition: service_healthy
     environment:
+      - ASPNETCORE_URLS=http://+:8080
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=TodoDb;User Id=sa;Password=${SQL_SA_PASSWORD};
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=TodoDb;User Id=sa;Password=${SQL_SA_PASSWORD};TrustServerCertificate=True
 
 volumes:
   sqlvolume:
