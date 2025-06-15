@@ -1,13 +1,10 @@
 services:
   sqlserver:
-    # CORRECAO: Usando a imagem azure-sql-edge que inclui as sql-tools
     image: mcr.microsoft.com/azure-sql-edge
     container_name: sqlserver-todo
     environment:
       SA_PASSWORD: "${SQL_SA_PASSWORD}"
       ACCEPT_EULA: "Y"
-    ports:
-      - "1433:1433"
     volumes:
       - sqlvolume:/var/opt/mssql
       - ./Data:/docker-entrypoint-initdb.d
@@ -17,13 +14,13 @@ services:
       timeout: 10s
       retries: 10
       start_period: 10s
-    command: >
-      bash -c "
-        /opt/mssql/bin/sqlservr &
-        sleep 30 &&
-        /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P '${SQL_SA_PASSWORD}' -i /docker-entrypoint-initdb.d/InitDb.sql &&
-        tail -f /dev/null
-      "
+    # command: >
+    #   bash -c "
+    #     /opt/mssql/bin/sqlservr &
+    #     sleep 30 &&
+    #     /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P '${SQL_SA_PASSWORD}' -i /docker-entrypoint-initdb.d/InitDb.sql &&
+    #     tail -f /dev/null
+    #   "
 
   api:
     build:
