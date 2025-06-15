@@ -9,11 +9,11 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# CORRECAO: Adicionar o caminho completo a partir da raiz
+# Copia o .csproj e restaura dependências
 COPY src/TodoListApi/TodoListApi.csproj .
 RUN dotnet restore TodoListApi.csproj
 
-# CORRECAO: Copiar o conteudo da pasta da API
+# Copia o resto dos arquivos do projeto
 COPY src/TodoListApi/. .
 
 # Compila o projeto
@@ -29,7 +29,5 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Copia os scripts SQL para a imagem final
-COPY --from=build /src/Data ./Data
 
 ENTRYPOINT ["dotnet", "TodoListApi.dll"]
