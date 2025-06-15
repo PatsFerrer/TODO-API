@@ -1,5 +1,5 @@
-﻿using Dapper;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.EntityFrameworkCore;
+using TodoListApi.Infra;
 using TodoListApi.Models;
 using TodoListApi.Repositories.Interface;
 
@@ -7,33 +7,25 @@ namespace TodoListApi.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly string _connectionString;
+        private readonly TodoDbContext _context;
 
-        public UserRepository(IConfiguration configuration)
+        public UserRepository(TodoDbContext context)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _context = context;
         }
 
         public async Task<User> CreateAsync(User user)
         {
-            var query = File.ReadAllText("Data/Users/CreateUser.sql");
-
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                await connection.ExecuteAsync(query, user);
-            }
-
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
             return user;
         }
 
         public async Task<User?> GetByUsernameAsync(string username)
         {
-            var query = File.ReadAllText("Data/Users/GetUserByUsername.sql");
-
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                return await connection.QueryFirstOrDefaultAsync<User>(query, new { Username = username });
-            }
+            return await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Username == username);
         }
     }
 }

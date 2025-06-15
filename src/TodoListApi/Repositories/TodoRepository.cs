@@ -1,6 +1,6 @@
-﻿using Dapper;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.EntityFrameworkCore;
 using TodoListApi.DTOs.Todo;
+using TodoListApi.Infra;
 using TodoListApi.Models;
 using TodoListApi.Repositories.Interface;
 
@@ -8,62 +8,49 @@ namespace TodoListApi.Repositories
 {
     public class TodoRepository : ITodoRepository
     {
-        private readonly string _connectionString;
+        private readonly TodoDbContext _context;
 
-        public TodoRepository(IConfiguration configuration)
+        public TodoRepository(TodoDbContext context)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _context = context;
         }
 
         public async Task CreateAsync(Todo todo)
         {
-            var query = File.ReadAllText("Data/Todos/CreateTodo.sql");
-
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                await connection.ExecuteAsync(query, todo);
-            }
+            await _context.Todos.AddAsync(todo);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<TodoResponseDTO>> GetTodosByUserIdAsync(Guid userId)
         {
-            var query = File.ReadAllText("Data/Todos/GetTodosByUserId.sql");
-
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                var todos = await connection.QueryAsync<TodoResponseDTO>(query, new { UserId = userId });
-                return todos;
-            }
+            return await _context.Todos
+                .AsNoTracking()
+                .Where(t => t.UserId == userId)
+                .Select(t => new TodoResponseDTO
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    IsCompleted = t.IsCompleted,
+                    CreatedAt = t.CreatedAt
+                })
+                .ToListAsync();
         }
 
         public async Task<Todo?> GetByIdAsync(Guid id)
         {
-            var query = File.ReadAllText("Data/Todos/GetTodoById.sql");
-
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                return await connection.QueryFirstOrDefaultAsync<Todo>(query, new { Id = id });
-            }
+            return await _context.Todos.FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task UpdateAsync(Todo todo)
         {
-            var query = File.ReadAllText("Data/Todos/UpdateTodo.sql");
-
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                await connection.ExecuteAsync(query, new { todo.Id, todo.IsCompleted });
-            }
+            _context.Todos.Update(todo);
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Todo todo)
         {
-            var query = File.ReadAllText("Data/Todos/DeleteTodo.sql");
-
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                await connection.ExecuteAsync(query, new { todo.Id });
-            }
+            _context.Todos.Remove(todo);
+            await _context.SaveChangesAsync();
         }
     }
 }
