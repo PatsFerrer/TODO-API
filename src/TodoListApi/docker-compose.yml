@@ -6,7 +6,7 @@ services:
       SA_PASSWORD: "${SQL_SA_PASSWORD}"
       ACCEPT_EULA: "Y"
     volumes:
-      - sqlvolume:/var/opt/mssql
+      - sqlvolume-v2:/var/opt/mssql
       - ./Data:/docker-entrypoint-initdb.d
       - ./entrypoint.sh:/entrypoint.sh
     healthcheck:
@@ -14,7 +14,7 @@ services:
       interval: 10s
       timeout: 10s
       retries: 10
-      start_period: 10s
+      start_period: 60s
     command: /entrypoint.sh
 
   api:
