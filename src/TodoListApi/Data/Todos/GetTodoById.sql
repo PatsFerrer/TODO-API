@@ -1,1 +1,0 @@
-SELECT * FROM Todos WHERE Id = @Id

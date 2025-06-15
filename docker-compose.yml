@@ -5,18 +5,11 @@ services:
     environment:
       SA_PASSWORD: "${SQL_SA_PASSWORD}"
       ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
     volumes:
-      # Mudei para v4 para garantir a criacao de um banco de dados novo
-      - sqlvolume-v4:/var/opt/mssql
-      - ./src/TodoListApi/Data:/docker-entrypoint-initdb.d
-    healthcheck:
-      # A MAGICA FINAL: Este healthcheck SO PASSA quando o banco "TodoDb" realmente existir!
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"${SQL_SA_PASSWORD}\" -d TodoDb -Q \"SELECT 1\" || exit 1"]
-      interval: 15s
-      timeout: 10s
-      retries: 20
-      start_period: 60s
-    # NENHUMA linha de 'command:' aqui. A imagem vai cuidar de tudo sozinha.
+      - sqlvolume-final:/var/opt/mssql
 
   api:
     build:
@@ -25,13 +18,11 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      sqlserver:
-        # Agora a condicao 'service_healthy' significa que o TodoDb esta 100% PRONTO.
-        condition: service_healthy
+      - sqlserver
     environment:
       - ASPNETCORE_URLS=http://+:8080
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=TodoDb;User Id=sa;Password=${SQL_SA_PASSWORD};TrustServerCertificate=True
 
 volumes:
-  sqlvolume-v4:
+  sqlvolume-final:

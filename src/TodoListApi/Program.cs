@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
 using TodoListApi.Auth;
 using TodoListApi.Auth.Interface;
+using TodoListApi.Infra;
 using TodoListApi.Middlewares;
 using TodoListApi.Repositories;
 using TodoListApi.Repositories.Interface;
@@ -58,6 +60,13 @@ builder.WebHost.ConfigureKestrel(options =>
     options.ListenAnyIP(8080);
 });
 
+// Pega a string de conexao do appsettings.json ou .env
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Registra o DbContext para injecao de dependencia
+builder.Services.AddDbContext<TodoDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
 // Adiciona Repositórios e Serviços
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -93,5 +102,12 @@ app.UseAuthentication(); // <-- isso ativa o middleware de autenticação
 app.UseAuthorization();
 
 app.MapControllers();
+
+// RODA A MIGRACAO AUTOMATICAMENTE
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<TodoDbContext>();
+    dbContext.Database.Migrate();
+}
 
 app.Run();

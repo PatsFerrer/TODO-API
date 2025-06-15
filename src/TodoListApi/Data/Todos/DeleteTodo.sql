@@ -1,1 +1,0 @@
-DELETE FROM Todos WHERE Id = @Id
