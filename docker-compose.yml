@@ -12,10 +12,10 @@ services:
     healthcheck:
       # A MAGICA FINAL: Este healthcheck SO PASSA quando o banco "TodoDb" realmente existir!
       test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"${SQL_SA_PASSWORD}\" -d TodoDb -Q \"SELECT 1\" || exit 1"]
-      interval: 10s
+      interval: 15s
       timeout: 10s
-      retries: 15
-      start_period: 30s
+      retries: 20
+      start_period: 60s
     # NENHUMA linha de 'command:' aqui. A imagem vai cuidar de tudo sozinha.
 
   api:
